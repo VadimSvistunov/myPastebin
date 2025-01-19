@@ -1,0 +1,10 @@
+services:
+  db:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_DB: "pastebin"
+      POSTGRES_USER: "pastebin"
+      POSTGRES_PASSWORD: "pastebin"
+    ports:
+      - "5433:5432"

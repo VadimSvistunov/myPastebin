@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: myPastebin
+  datasource:
+    url: jdbc:postgresql://localhost:5433/pastebin
+    username: pastebin
+    password: pastebin
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    properties:
+      hibernate:
+        format_sql: true
