@@ -15,7 +15,8 @@ public class Post {
     private Long id;
     private String text;
     @NonNull
-    private String url;
+    @Column(unique=true)
+    private String hash;
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
