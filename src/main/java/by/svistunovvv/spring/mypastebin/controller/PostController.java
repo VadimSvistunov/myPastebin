@@ -1,7 +1,9 @@
 package by.svistunovvv.spring.mypastebin.controller;
 
-import by.svistunovvv.spring.mypastebin.model.Post;
-import by.svistunovvv.spring.mypastebin.model.User;
+import by.svistunovvv.spring.mypastebin.exception.UserNotFoundException;
+import by.svistunovvv.spring.mypastebin.model.dto.PostRequest;
+import by.svistunovvv.spring.mypastebin.model.entity.Post;
+import by.svistunovvv.spring.mypastebin.model.entity.User;
 import by.svistunovvv.spring.mypastebin.service.PostService;
 import by.svistunovvv.spring.mypastebin.service.UserService;
 import lombok.AllArgsConstructor;
@@ -35,9 +37,13 @@ public class PostController {
     }
 
     @PostMapping("")
-    public String save(@RequestBody Post Post) {
-        service.save(Post);
-        return "Success save";
+    public String save(@RequestBody PostRequest postRequest) {
+        try {
+            service.savePostData(postRequest);
+            return "Success save";
+        } catch (IllegalArgumentException | UserNotFoundException e) {
+            return e.getMessage();
+        }
     }
 
     @PutMapping("")

@@ -1,4 +1,4 @@
-package by.svistunovvv.spring.mypastebin.model;
+package by.svistunovvv.spring.mypastebin.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;

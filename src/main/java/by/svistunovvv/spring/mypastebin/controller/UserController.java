@@ -1,6 +1,6 @@
 package by.svistunovvv.spring.mypastebin.controller;
 
-import by.svistunovvv.spring.mypastebin.model.User;
+import by.svistunovvv.spring.mypastebin.model.entity.User;
 import by.svistunovvv.spring.mypastebin.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;

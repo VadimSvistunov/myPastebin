@@ -1,6 +1,6 @@
 package by.svistunovvv.spring.mypastebin.service;
 
-import by.svistunovvv.spring.mypastebin.model.User;
+import by.svistunovvv.spring.mypastebin.model.entity.User;
 
 import java.util.List;
 

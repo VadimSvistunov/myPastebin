@@ -1,6 +1,6 @@
 package by.svistunovvv.spring.mypastebin.repository;
 
-import by.svistunovvv.spring.mypastebin.model.Post;
+import by.svistunovvv.spring.mypastebin.model.entity.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

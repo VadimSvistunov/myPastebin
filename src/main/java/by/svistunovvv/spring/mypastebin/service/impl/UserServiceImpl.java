@@ -1,6 +1,6 @@
 package by.svistunovvv.spring.mypastebin.service.impl;
 
-import by.svistunovvv.spring.mypastebin.model.User;
+import by.svistunovvv.spring.mypastebin.model.entity.User;
 import by.svistunovvv.spring.mypastebin.repository.UserRepository;
 import by.svistunovvv.spring.mypastebin.service.UserService;
 import lombok.AllArgsConstructor;
@@ -12,6 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
     private UserRepository repository;
+
     @Override
     public List<User> findAll() {
         return repository.findAll();
