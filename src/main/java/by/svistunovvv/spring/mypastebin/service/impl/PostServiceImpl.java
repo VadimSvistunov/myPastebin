@@ -3,26 +3,27 @@ package by.svistunovvv.spring.mypastebin.service.impl;
 import by.svistunovvv.spring.mypastebin.exception.UserNotFoundException;
 import by.svistunovvv.spring.mypastebin.minio.MinioService;
 import by.svistunovvv.spring.mypastebin.model.dto.PostRequest;
+import by.svistunovvv.spring.mypastebin.model.dto.PostResponse;
 import by.svistunovvv.spring.mypastebin.model.entity.Post;
 import by.svistunovvv.spring.mypastebin.model.entity.User;
-import by.svistunovvv.spring.mypastebin.repository.PostRepository;
+import by.svistunovvv.spring.mypastebin.repository.jpa.PostRepository;
+import by.svistunovvv.spring.mypastebin.repository.redis.RedisPostRepository;
 import by.svistunovvv.spring.mypastebin.service.PostService;
 import by.svistunovvv.spring.mypastebin.service.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.util.List;
 
 @Service
 @AllArgsConstructor
 public class PostServiceImpl implements PostService {
     private PostRepository repository;
+    private RedisPostRepository redisPostRepository;
     private UserService userService;
     private MinioService minioService;
+    private RedisTemplate<String, Object> redisTemplate;
 
     @Override
     public Post savePostData(PostRequest postRequest) {

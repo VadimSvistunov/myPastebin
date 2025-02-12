@@ -6,6 +6,10 @@ spring:
     username: pastebin
     password: pastebin
     driver-class-name: org.postgresql.Driver
+  data:
+    redis:
+      host: localhost
+      port: 6380
   jpa:
     hibernate:
       ddl-auto: update
