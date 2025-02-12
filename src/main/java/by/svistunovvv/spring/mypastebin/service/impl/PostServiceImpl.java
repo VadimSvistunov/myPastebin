@@ -28,10 +28,10 @@ public class PostServiceImpl implements PostService {
     public Post savePostData(PostRequest postRequest) {
         User user = validatePostRequest(postRequest);
 
-        if (!minioService.isBucketExist(postRequest.getEmail())) {
-            minioService.makeBucket(postRequest.getEmail());
+        if (!minioService.isBucketExist(Integer.toString(postRequest.getEmail().hashCode()))) {
+            minioService.makeBucket(Integer.toString(postRequest.getEmail().hashCode()));
         }
-        int hash = postRequest.hashCode();
+        String hash = Integer.toString(postRequest.hashCode());
         minioService.loadPostDataToMinio(postRequest, hash);
 
         Post post = Post.builder()
@@ -54,13 +54,26 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> findPostsByUserId(Long userId) {
-        return repository.findPostsByUserId(userId);
+    public List<PostResponse> findPostsByUserId(Long userId) {
+//        return repository.findPostsByUserId(userId);
+        return null;
     }
 
     @Override
-    public Post findPostByHash(String hash) {
-        return repository.findPostByHash(hash);
+    public PostResponse findPostByHash(String hash) {
+        Post post = repository.findPostByHash(hash);
+        String bucketName = Integer.toString(post.getUser().getEmail().hashCode());
+        if(minioService.isBucketExist(bucketName)) {
+            String text = minioService.getPostText(bucketName, hash);
+            return PostResponse.builder()
+                    .email(post.getUser().getEmail())
+                    .hash(hash)
+                    .text(text)
+                    .build();
+
+        }
+
+        return null;
     }
 
     @Override

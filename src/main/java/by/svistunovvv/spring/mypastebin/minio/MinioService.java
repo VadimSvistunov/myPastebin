@@ -2,24 +2,22 @@ package by.svistunovvv.spring.mypastebin.minio;
 
 import by.svistunovvv.spring.mypastebin.model.dto.PostRequest;
 import io.minio.*;
-import io.minio.errors.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 
 @Service
 @AllArgsConstructor
 public class MinioService {
     private MinioClient minioClient;
 
-    public boolean isBucketExist(String email) {
+    public boolean isBucketExist(String emailHash) {
         boolean found = false;
         try {
-            found = minioClient.bucketExists(BucketExistsArgs.builder().bucket(email).build());
+            found = minioClient.bucketExists(BucketExistsArgs.builder().bucket(emailHash).build());
         } catch (Exception e) {
             MinioExceptionHandler.handle(e);
         }
@@ -27,37 +25,43 @@ public class MinioService {
         return found;
     }
 
-    public void makeBucket(String email) {
+    public void makeBucket(String emailHash) {
         try {
             minioClient.makeBucket(
                     MakeBucketArgs.builder()
-                            .bucket(email)
+                            .bucket(emailHash)
                             .build());
         } catch (Exception e) {
             MinioExceptionHandler.handle(e);
         }
     }
 
-    public void removeBucket(String email) {
+    public void removeBucket(String emailHash) {
         try {
             minioClient.removeBucket(
                     RemoveBucketArgs.builder()
-                            .bucket(email)
+                            .bucket(emailHash)
                             .build());
         } catch (Exception e) {
             MinioExceptionHandler.handle(e);
         }
     }
 
-    public String getPost(String email, String hash) {
+    public String getPostText(String emailHash, String hash) {
         String text = null;
         try (InputStream stream = minioClient.getObject(
                 GetObjectArgs.builder()
-                        .bucket(email)
+                        .bucket(emailHash)
                         .object(hash)
                         .build())) {
-            byte[] bytes = stream.readAllBytes();
-            text = new String(bytes);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
+            StringBuilder stringBuilder = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                stringBuilder.append(line).append("\n");
+            }
+            text = finalFormatting(stringBuilder);
+            reader.close();
         } catch (Exception e) {
             MinioExceptionHandler.handle(e);
         }
@@ -65,12 +69,20 @@ public class MinioService {
         return text;
     }
 
-    public void putPost(String email, File file) {
+    private String finalFormatting(StringBuilder stringBuilder) {
+        String text = stringBuilder.toString();
+        if (text.endsWith("\n")) {
+            text = text.substring(0, text.length() - 1);
+        }
+        return text;
+    }
+
+    public void putPost(String email, String hash , File file) {
         try {
             minioClient.putObject(PutObjectArgs
                     .builder()
-                    .bucket(email)
-                    .object(file.getName())
+                    .bucket(Integer.toString(email.hashCode()))
+                    .object(hash)
                     .stream(new FileInputStream(file), file.length(), -1)
                     .build());
         } catch (Exception e) {
@@ -78,10 +90,10 @@ public class MinioService {
         }
     }
 
-    public void loadPostDataToMinio(PostRequest postRequest, int hash) {
+    public void loadPostDataToMinio(PostRequest postRequest, String hash) {
         File file;
         try {
-            file = Files.createTempFile(Integer.toString(hash), "").toFile();
+            file = Files.createTempFile(hash, "").toFile();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -91,6 +103,6 @@ public class MinioService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        putPost(postRequest.getEmail(), file);
+        putPost(postRequest.getEmail(), hash, file);
     }
 }

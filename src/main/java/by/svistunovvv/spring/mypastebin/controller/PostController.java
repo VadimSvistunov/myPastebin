@@ -2,6 +2,7 @@ package by.svistunovvv.spring.mypastebin.controller;
 
 import by.svistunovvv.spring.mypastebin.exception.UserNotFoundException;
 import by.svistunovvv.spring.mypastebin.model.dto.PostRequest;
+import by.svistunovvv.spring.mypastebin.model.dto.PostResponse;
 import by.svistunovvv.spring.mypastebin.model.entity.Post;
 import by.svistunovvv.spring.mypastebin.model.entity.User;
 import by.svistunovvv.spring.mypastebin.service.PostService;
@@ -24,15 +25,15 @@ public class PostController {
         return service.findAll();
     }
 
-    @GetMapping("/{email}")
-    public List<Post> getAllPostsByUser(@PathVariable String email) {
+    @GetMapping("/user/{email}")
+    public List<PostResponse> getAllPostsByUser(@PathVariable String email) {
         User user = userService.findByEmail(email);
         return service.findPostsByUserId(user.getId());
     }
 
 
     @GetMapping("/{hash}")
-    public Post getPostByPostNumber(@PathVariable String hash) {
+    public PostResponse getPostByHash(@PathVariable String hash) {
         return service.findPostByHash(hash);
     }
 
