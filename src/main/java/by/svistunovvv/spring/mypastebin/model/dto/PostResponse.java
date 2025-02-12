@@ -9,4 +9,5 @@ public class PostResponse {
     private String email;
     private String text;
     private String hash;
+    private String message;
 }

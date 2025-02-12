@@ -1,5 +1,6 @@
 package by.svistunovvv.spring.mypastebin.controller;
 
+import by.svistunovvv.spring.mypastebin.exception.PostNotFoundException;
 import by.svistunovvv.spring.mypastebin.exception.UserNotFoundException;
 import by.svistunovvv.spring.mypastebin.model.dto.PostRequest;
 import by.svistunovvv.spring.mypastebin.model.dto.PostResponse;
@@ -34,7 +35,11 @@ public class PostController {
 
     @GetMapping("/{hash}")
     public PostResponse getPostByHash(@PathVariable String hash) {
-        return service.findPostByHash(hash);
+        try {
+            return service.findPostByHash(hash);
+        } catch (PostNotFoundException e) {
+            return PostResponse.builder().message(e.getMessage()).build();
+        }
     }
 
     @PostMapping("")

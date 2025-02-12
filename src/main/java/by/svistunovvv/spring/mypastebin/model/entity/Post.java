@@ -3,6 +3,7 @@ package by.svistunovvv.spring.mypastebin.model.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.redis.core.RedisHash;
+import org.springframework.data.redis.core.index.Indexed;
 
 import java.io.Serializable;
 
@@ -18,6 +19,7 @@ public class Post implements Serializable {
     @GeneratedValue
     private Long id;
     @NonNull
+    @Indexed
     @Column(unique=true)
     private String hash;
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)

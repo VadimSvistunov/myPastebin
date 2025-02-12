@@ -1,5 +1,6 @@
 package by.svistunovvv.spring.mypastebin.service.impl;
 
+import by.svistunovvv.spring.mypastebin.exception.PostNotFoundException;
 import by.svistunovvv.spring.mypastebin.exception.UserNotFoundException;
 import by.svistunovvv.spring.mypastebin.minio.MinioService;
 import by.svistunovvv.spring.mypastebin.model.dto.PostRequest;
@@ -62,7 +63,14 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public PostResponse findPostByHash(String hash) {
-        Post post = repository.findPostByHash(hash);
+        Post post = redisPostRepository.findByHash(hash)
+                .orElseGet(() -> repository.findPostByHash(hash).map(
+                        foundPost -> {
+                            redisPostRepository.save(foundPost);
+                            return foundPost;
+                        })
+                        .orElseThrow(() -> new PostNotFoundException("No post found with hash: " + hash)));
+
         String bucketName = Integer.toString(post.getUser().getEmail().hashCode());
         if(minioService.isBucketExist(bucketName)) {
             String text = minioService.getPostText(bucketName, hash);
@@ -71,7 +79,6 @@ public class PostServiceImpl implements PostService {
                     .hash(hash)
                     .text(text)
                     .build();
-
         }
 
         return null;
