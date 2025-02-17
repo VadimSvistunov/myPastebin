@@ -24,7 +24,6 @@ public class PostServiceImpl implements PostService {
     private RedisPostRepository redisPostRepository;
     private UserService userService;
     private MinioService minioService;
-    private RedisTemplate<String, Object> redisTemplate;
 
     @Override
     public Post savePostData(PostRequest postRequest) {
